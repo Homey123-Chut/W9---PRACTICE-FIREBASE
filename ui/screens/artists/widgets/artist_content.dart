@@ -4,6 +4,7 @@ import '../../../../model/artists/artist.dart';
 import '../../../theme/theme.dart';
 import '../../../utils/async_value.dart';
 import '../view_model/artist_view_model.dart';
+import '../../../widgets/artist/artist_tile.dart';
 
 class ArtistContent extends StatelessWidget {
   const ArtistContent({super.key});
@@ -30,7 +31,16 @@ class ArtistContent extends StatelessWidget {
 
       case AsyncValueState.success:
         List<Artist> artists = asyncValue.data!;
-        
+        content = ListView.builder(
+          itemCount: artists.length,
+          itemBuilder: (context, index) => ArtistTile(
+            artist: artists[index],
+            onTap: () {
+             
+            },
+          ),
+        );
+
         break;
     }
 
