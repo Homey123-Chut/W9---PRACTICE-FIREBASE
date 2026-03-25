@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:w9/data/repositories/artists/artist_repository.dart';
+import 'package:w9/model/song_artist.dart';
 import '../../../../data/repositories/songs/song_repository.dart';
 import '../../../states/player_state.dart';
 import '../../../../model/songs/song.dart';
@@ -7,10 +9,15 @@ import '../../../utils/async_value.dart';
 class LibraryViewModel extends ChangeNotifier {
   final SongRepository songRepository;
   final PlayerState playerState;
+  final ArtistRepository artistRepository;
 
-  AsyncValue<List<Song>> songsValue = AsyncValue.loading();
+  AsyncValue<List<SongArtist>> songsValue = AsyncValue.loading();
 
-  LibraryViewModel({required this.songRepository, required this.playerState}) {
+  LibraryViewModel({
+    required this.songRepository,
+    required this.playerState,
+    required this.artistRepository,
+  }) {
     playerState.addListener(notifyListeners);
 
     // init
@@ -35,17 +42,41 @@ class LibraryViewModel extends ChangeNotifier {
     try {
       // 2- Fetch is successfull
       List<Song> songs = await songRepository.fetchSongs();
-      songsValue = AsyncValue.success(songs);
+      final artists = await artistRepository.fetchArtists();
+
+      final artistById = {
+        for (final artist in artists) artist.id: artist,
+      };
+
+      final List<SongArtist> joined = [];
+
+      for (final song in songs) {
+        final int minutes = song.duration.inMinutes;
+        final String durationText = minutes.toString() + " mn";
+
+        final artist = artistById[song.artistId];
+        final SongArtist item = SongArtist(
+          song: song,
+          artistName: artist?.name ?? 'Unknown Artist',
+          artistGenre: artist?.genre ?? 'Unknown Genre',
+          artistImageUrl: artist?.imageUrl ?? '',
+          duration: durationText,
+        );
+
+        joined.add(item);
+      }
+
+      songsValue = AsyncValue.success(joined);
     } catch (e) {
       // 3- Fetch is unsucessfull
       songsValue = AsyncValue.error(e);
     }
-     notifyListeners();
+    notifyListeners();
 
   }
 
-  bool isSongPlaying(Song song) => playerState.currentSong == song;
+  bool isSongPlaying(SongArtist item) => playerState.currentSong == item.song;
 
-  void start(Song song) => playerState.start(song);
-  void stop(Song song) => playerState.stop();
+  void start(SongArtist item) => playerState.start(item.song);
+  void stop() => playerState.stop();
 }
