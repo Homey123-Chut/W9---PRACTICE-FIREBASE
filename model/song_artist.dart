@@ -1,17 +1,12 @@
 import 'songs/song.dart';
+import 'artists/artist.dart';
 
 class SongArtist {
   final Song song;
-  final String artistName;
-  final String artistGenre;
-  final String artistImageUrl;
-  final String duration;
+  final Artist artist;
 
   SongArtist({
     required this.song,
-    required this.artistName,
-    required this.artistGenre,
-    required this.artistImageUrl,
-    required this.duration,
+    required this.artist,
   });
 }

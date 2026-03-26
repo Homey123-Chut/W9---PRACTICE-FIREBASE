@@ -27,11 +27,11 @@ class SongTile extends StatelessWidget {
           onTap: onTap,
           leading: CircleAvatar(
             radius: 30,
-            backgroundImage: NetworkImage(item.artistImageUrl),
+            backgroundImage: NetworkImage(item.artist.imageUrl),
             
           ),
           title: Text(item.song.title),
-          subtitle: Text('${item.duration}   ${item.artistName} –  ${item.artistGenre}'),
+          subtitle: Text('${item.song.duration.inMinutes} mn   ${item.artist.name} –  ${item.artist.genre}'),
 
           trailing: Text(
                 isPlaying ? "Playing" : "",

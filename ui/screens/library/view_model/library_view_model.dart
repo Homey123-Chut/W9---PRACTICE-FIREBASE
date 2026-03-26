@@ -51,16 +51,10 @@ class LibraryViewModel extends ChangeNotifier {
       final List<SongArtist> joined = [];
 
       for (final song in songs) {
-        final int minutes = song.duration.inMinutes;
-        final String durationText = minutes.toString() + " mn";
-
-        final artist = artistById[song.artistId];
+        final artist = artistById[song.artistId]!;
         final SongArtist item = SongArtist(
           song: song,
-          artistName: artist?.name ?? 'Unknown Artist',
-          artistGenre: artist?.genre ?? 'Unknown Genre',
-          artistImageUrl: artist?.imageUrl ?? '',
-          duration: durationText,
+          artist: artist,
         );
 
         joined.add(item);
